@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Set Goals</title>
+</head>
+<body>
+  <h2>Set Daily Goals</h2>
+  <input type="number" id="calories" placeholder="Calories">
+  <input type="number" id="protein" placeholder="Protein (g)">
+  <input type="number" id="carbs" placeholder="Carbs (g)">
+  <input type="number" id="fats" placeholder="Fats (g)">
+  <button onclick="setGoals()">Save Goals</button>
+  <p id="message"></p>
+
+  <script>
+    async function setGoals() {
+      const token = localStorage.getItem("token");
+      const data = {
+        calories: +document.getElementById("calories").value,
+        protein: +document.getElementById("protein").value,
+        carbs: +document.getElementById("carbs").value,
+        fats: +document.getElementById("fats").value
+      };
+
+      const res = await fetch("http://localhost:5000/goals", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      document.getElementById("message").innerText = result.message || "Goals updated.";
+    }
+  </script>
+</body>
+</html>
