@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Log Food</title>
+</head>
+<body>
+  <h2>Log Food</h2>
+  <input type="text" id="name" placeholder="Food name">
+  <input type="number" id="calories" placeholder="Calories">
+  <input type="number" id="protein" placeholder="Protein">
+  <input type="number" id="carbs" placeholder="Carbs">
+  <input type="number" id="fats" placeholder="Fats">
+  <button onclick="logFood()">Log</button>
+  <p id="message"></p>
+
+  <script>
+    async function logFood() {
+      const token = localStorage.getItem("token");
+      const food = {
+        name: document.getElementById("name").value,
+        calories: +document.getElementById("calories").value,
+        protein: +document.getElementById("protein").value,
+        carbs: +document.getElementById("carbs").value,
+        fats: +document.getElementById("fats").value
+      };
+
+      const res = await fetch("http://localhost:5000/log", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token
+        },
+        body: JSON.stringify(food)
+      });
+
+      const result = await res.json();
+      document.getElementById("message").innerText = result.message || "Food logged!";
+    }
+  </script>
+</body>
+</html>
