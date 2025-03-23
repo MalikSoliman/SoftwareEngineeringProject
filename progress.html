@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Progress</title>
+</head>
+<body>
+  <h2>Your Food Log</h2>
+  <ul id="log"></ul>
+
+  <script>
+    async function getProgress() {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:5000/progress", {
+        headers: { "Authorization": token }
+      });
+
+      const data = await res.json();
+      const list = document.getElementById("log");
+      list.innerHTML = "";
+
+      data.entries.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText = `${item.name}: ${item.calories} cal, P:${item.protein} C:${item.carbs} F:${item.fats}`;
+        list.appendChild(li);
+      });
+    }
+
+    getProgress();
+  </script>
+</body>
+</html>
