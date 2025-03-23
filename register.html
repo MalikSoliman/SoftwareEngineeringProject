@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 100px; }
+    input, button { padding: 10px; margin: 10px auto; width: 200px; display: block; }
+  </style>
+</head>
+<body>
+  <h2>Register</h2>
+  <input type="text" id="username" placeholder="Choose a username" />
+  <input type="password" id="password" placeholder="Choose a password" />
+  <button onclick="register()">Register</button>
+  <p id="message"></p>
+  <p><a href="index.html">Back to Login</a></p>
+
+  <script>
+    async function register() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+      document.getElementById("message").innerText = data.message || data.error;
+    }
+  </script>
+</body>
+</html>
