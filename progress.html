@@ -1,31 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Progress</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin: 50px; }
+    table { width: 80%; margin: 0 auto; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+  </style>
 </head>
 <body>
   <h2>Your Food Log</h2>
-  <ul id="log"></ul>
+  <table id="logTable">
+    <thead>
+      <tr><th>Name</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fats</th><th>Date</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p id="message"></p>
 
   <script>
-    async function getProgress() {
+    async function fetchProgress() {
       const token = localStorage.getItem("token");
 
       const res = await fetch("http://localhost:5000/progress", {
-        headers: { "Authorization": token }
+        headers: {
+          "Authorization": "Bearer " + token
+        }
       });
 
       const data = await res.json();
-      const list = document.getElementById("log");
-      list.innerHTML = "";
+      const tbody = document.querySelector("#logTable tbody");
+      tbody.innerHTML = "";
 
-      data.entries.forEach(item => {
-        const li = document.createElement("li");
-        li.innerText = `${item.name}: ${item.calories} cal, P:${item.protein} C:${item.carbs} F:${item.fats}`;
-        list.appendChild(li);
-      });
+      if (data.entries && data.entries.length > 0) {
+        data.entries.forEach(entry => {
+          const row = `<tr>
+            <td>${entry.name}</td>
+            <td>${entry.calories}</td>
+            <td>${entry.protein}</td>
+            <td>${entry.carbs}</td>
+            <td>${entry.fats}</td>
+            <td>${new Date(entry.date).toLocaleString()}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+      } else {
+        document.getElementById("message").innerText = "No entries logged.";
+      }
     }
+
+    fetchProgress();
+  </script>
+</body>
+</html>
 
     getProgress();
   </script>
