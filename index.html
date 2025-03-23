@@ -1,38 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 100px; }
-        input { display: block; margin: 10px auto; padding: 10px; width: 200px; }
-        button { padding: 10px 20px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 100px; }
+    input, button { padding: 10px; margin: 10px auto; width: 200px; display: block; }
+  </style>
 </head>
 <body>
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <button onclick="guestLogin()">Continue as Guest</button>
+  <p>No account? <a href="register.html">Register here</a></p>
+  <p id="message"></p>
 
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p id="message"></p>
+  <script>
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-    <script>
-        async function login() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
 
-            const response = await fetch("http://localhost:5000/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
-            });
+      const data = await response.json();
+      document.getElementById("message").innerText = data.message || "Token: " + data.token;
+      if (data.token) localStorage.setItem("token", data.token);
+    }
 
-            const data = await response.json();
-            document.getElementById("message").innerText = data.message || "Login successful! Token: " + data.token;
-        }
-    </script>
+    async function guestLogin() {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "guest", password: "guest123" })
+      });
 
+      const data = await response.json();
+      document.getElementById("message").innerText = data.message || "Logged in as guest. Token: " + data.token;
+      if (data.token) localStorage.setItem("token", data.token);
+    }
+  </script>
 </body>
 </html>
