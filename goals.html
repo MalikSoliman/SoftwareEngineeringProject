@@ -1,39 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Set Goals</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    input, button { display: block; margin: 10px auto; padding: 10px; width: 200px; }
+  </style>
 </head>
 <body>
-  <h2>Set Daily Goals</h2>
-  <input type="number" id="calories" placeholder="Calories">
-  <input type="number" id="protein" placeholder="Protein (g)">
-  <input type="number" id="carbs" placeholder="Carbs (g)">
-  <input type="number" id="fats" placeholder="Fats (g)">
-  <button onclick="setGoals()">Save Goals</button>
+  <h2>Set Your Nutrition Goals</h2>
+  <input id="calories" type="number" placeholder="Calories">
+  <input id="protein" type="number" placeholder="Protein (g)">
+  <input id="carbs" type="number" placeholder="Carbs (g)">
+  <input id="fats" type="number" placeholder="Fats (g)">
+  <button onclick="submitGoals()">Submit</button>
   <p id="message"></p>
 
   <script>
-    async function setGoals() {
+    async function submitGoals() {
       const token = localStorage.getItem("token");
-      const data = {
-        calories: +document.getElementById("calories").value,
-        protein: +document.getElementById("protein").value,
-        carbs: +document.getElementById("carbs").value,
-        fats: +document.getElementById("fats").value
+      const body = {
+        calories: document.getElementById("calories").value,
+        protein: document.getElementById("protein").value,
+        carbs: document.getElementById("carbs").value,
+        fats: document.getElementById("fats").value
       };
 
       const res = await fetch("http://localhost:5000/goals", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token
+          "Authorization": "Bearer " + token
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(body)
       });
 
-      const result = await res.json();
-      document.getElementById("message").innerText = result.message || "Goals updated.";
+      const data = await res.json();
+      document.getElementById("message").innerText = data.message || data.error;
     }
   </script>
 </body>
